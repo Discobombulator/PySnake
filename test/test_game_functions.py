@@ -32,8 +32,8 @@ class TestGameFunctions(unittest.TestCase):
         stdscr = MagicMock()
         snake = [(5, 5), (5, 6), (5, 7)]
 
-        self.assertTrue(check_end_game((5, Constants.FIELD_WIDTH)
-                                       , stdscr,[]))
+        self.assertTrue(check_end_game((5, Constants.FIELD_WIDTH),
+                                       stdscr, []))
         self.assertTrue(check_end_game((5, 6), stdscr, snake))
 
 
