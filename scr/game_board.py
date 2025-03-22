@@ -1,4 +1,4 @@
-from Constants import Constants
+from constants import Constants
 
 
 def draw_board(snake, food, std):

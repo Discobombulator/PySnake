@@ -2,10 +2,10 @@ import curses
 import time
 import argparse
 
-from Constants import Constants
-from GameBoard import draw_board
-from GameController import controller, check_end_game
-from SnakesFood import create_food
+from constants import Constants
+from game_board import draw_board
+from game_controller import controller, check_end_game
+from snakes_food import create_food
 
 
 def main(std):

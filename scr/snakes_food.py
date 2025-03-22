@@ -1,4 +1,4 @@
-from Constants import Constants
+from constants import Constants
 import random
 
 

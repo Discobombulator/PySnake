@@ -2,7 +2,7 @@ import curses
 import time
 
 
-from Constants import Constants
+from constants import Constants
 
 
 def controller(direction, std):
