@@ -1,9 +1,8 @@
-from scr.constants  import Constants
+from scr.constants import Constants
 import random
 
 
 def create_food(snake):
-
     while True:
         pos = (random.randint(0, Constants.FIELD_HEIGHT - 1),
                random.randint(0, Constants.FIELD_WIDTH - 1))

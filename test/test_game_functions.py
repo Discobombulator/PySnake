@@ -4,7 +4,7 @@ import curses
 from unittest.mock import MagicMock
 from scr.constants import Constants
 from scr.game_scene.snakes_food import create_food
-from scr.game_controller import game_controller, check_end_game
+from scr.game_scene.game_controller import game_controller, check_end_game
 
 
 class TestGameFunctions(unittest.TestCase):

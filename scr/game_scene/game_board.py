@@ -3,7 +3,7 @@ import random
 from scr.constants import Constants
 
 
-def draw_board(snake, food, std,i , level=1, obstacles=None, ):
+def draw_board(snake, food, std, i, level=1, obstacles=None, ):
     std.clear()
 
     std.addstr(0, 0, Constants.BORDER_CHAR * (Constants.FIELD_WIDTH + 2))
@@ -14,7 +14,7 @@ def draw_board(snake, food, std,i , level=1, obstacles=None, ):
             cell = (row, col)
             if cell == food:
 
-                if i ==1:
+                if i == 1:
                     line += Constants.FOOD_CHAR1
                 else:
                     line += Constants.FOOD_CHAR2

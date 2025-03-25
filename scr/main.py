@@ -1,13 +1,11 @@
 import curses
 import argparse
 
-from scr.game_scene.main_scene import start_game
 from scr.start_scene.start_scene import start_work
 
 
 def main(std):
     start_work(std)
-
 
 
 if __name__ == "__main__":
