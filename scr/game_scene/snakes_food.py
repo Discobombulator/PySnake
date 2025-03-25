@@ -1,4 +1,4 @@
-from constants import Constants
+from scr.constants  import Constants
 import random
 
 

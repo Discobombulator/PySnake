@@ -3,8 +3,8 @@ import curses
 
 from unittest.mock import MagicMock
 from scr.constants import Constants
-from scr.snakes_food import create_food
-from scr.game_controller import controller, check_end_game
+from scr.game_scene.snakes_food import create_food
+from scr.game_controller import game_controller, check_end_game
 
 
 class TestGameFunctions(unittest.TestCase):
@@ -22,10 +22,10 @@ class TestGameFunctions(unittest.TestCase):
         stdscr = MagicMock()
 
         stdscr.getch.return_value = curses.KEY_UP
-        self.assertEqual(controller(Constants.RIGHT, stdscr), Constants.UP)
+        self.assertEqual(game_controller(Constants.RIGHT, stdscr), Constants.UP)
 
         stdscr.getch.return_value = ord('q')
-        self.assertEqual(controller(Constants.RIGHT, stdscr),
+        self.assertEqual(game_controller(Constants.RIGHT, stdscr),
                          "brake")  # Проверка выхода
 
     def test_check_end_game(self):

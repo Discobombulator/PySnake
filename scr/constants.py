@@ -1,10 +1,11 @@
 class Constants:
 
-    FIELD_HEIGHT = 20
-    FIELD_WIDTH = 40
+    FIELD_HEIGHT = 30
+    FIELD_WIDTH = 60
 
     SNAKE_CHAR = '#'
-    FOOD_CHAR = '*'
+    FOOD_CHAR1 = '*'
+    FOOD_CHAR2 = '@'
     BORDER_CHAR = '+'
 
     UP = (-1, 0)
