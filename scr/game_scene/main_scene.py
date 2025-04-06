@@ -5,7 +5,7 @@ from scr.constants import Constants
 from scr.game_scene.game_controller import game_controller, check_end_game
 from scr.game_scene.game_board import draw_board, generate_obstacles
 from scr.game_scene.snakes_food import create_food
-from scr.snake import Snake
+from scr.game_scene.snake import Snake
 from scr.start_scene.records import GameRecords
 
 
@@ -20,8 +20,10 @@ def start_game(std, level):
     food = create_food(snake.body)
     i = random.randint(1, 2)
     obstacles = generate_obstacles(snake, food, level)
-    while True:
+    horizontal_delay = 0.1
+    vertical_delay = 0.1 * Constants.SPEED_RATIO
 
+    while True:
         draw_board(snake, food, std, i, level=level, obstacles=obstacles)
 
         make_step = game_controller(snake.direction, std)
@@ -36,11 +38,17 @@ def start_game(std, level):
             records.set_data(snake.get_length())
             break
 
-        if next_head == food:
+        if next_head == food.position:
             snake.move(grow=True)
-            i = random.randint(1, 2)
+            for _ in range(
+                    food.get_growth() - 1):  # уже вырос на 1, добавим остальное
+                snake.move(grow=True)
             food = create_food(snake.body)
         else:
             snake.move(grow=False)
 
-        time.sleep(0.1)
+        # Разное время ожидания в зависимости от направления
+        if snake.direction in [Constants.LEFT, Constants.RIGHT]:
+            time.sleep(horizontal_delay)
+        else:
+            time.sleep(vertical_delay)

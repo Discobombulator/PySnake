@@ -1,7 +1,7 @@
 class Constants:
 
     FIELD_HEIGHT = 30
-    FIELD_WIDTH = 60
+    FIELD_WIDTH = 90
 
     SNAKE_CHAR = '#'
     FOOD_CHAR1 = '*'
@@ -12,3 +12,5 @@ class Constants:
     DOWN = (1, 0)
     LEFT = (0, -1)
     RIGHT = (0, 1)
+
+    SPEED_RATIO = 3

@@ -1,3 +1,5 @@
+import curses
+
 from scr.game_scene.main_scene import start_game
 
 
@@ -10,3 +12,5 @@ def level_controller(std):
         return start_game(std, 2)
     elif key in [ord('3'), ord('#')]:
         return start_game(std, 3)
+
+
