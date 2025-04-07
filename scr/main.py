@@ -5,7 +5,10 @@ from scr.start_scene.start_scene import start_work
 
 
 def main(std):
-    start_work(std)
+    while True:
+        result = start_work(std)
+        if result =="brake":
+            break
 
 
 if __name__ == "__main__":

@@ -23,4 +23,6 @@ def start_work(std):
     std.addstr(12, 0, "Уровень: ")
 
     std.refresh()
-    level_controller(std)
+    result = level_controller(std)
+
+    return result

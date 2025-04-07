@@ -34,9 +34,12 @@ def start_game(std, level):
 
         next_head = snake.get_next_head()
 
-        if check_end_game(next_head, std, snake, obstacles):
+        game_status = check_end_game(next_head, std, snake, obstacles)
+        if game_status == "brake":
             records.set_data(snake.get_length())
-            break
+            return "brake"
+        elif game_status == "restart":
+            return "play"  # просто продолжаем цикл
 
         if next_head == food.position:
             snake.move(grow=True)
@@ -52,3 +55,4 @@ def start_game(std, level):
             time.sleep(horizontal_delay)
         else:
             time.sleep(vertical_delay)
+

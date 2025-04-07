@@ -2,6 +2,7 @@ import curses
 import time
 
 from scr.constants import Constants
+from scr.end_scene.end_scene import print_end
 
 
 def game_controller(direction, std):
@@ -21,24 +22,21 @@ def game_controller(direction, std):
     return direction
 
 
-def print_end(std, snake):
-    std.clear()
-    std.addstr(0, 0, "Вы проиграли(((")
-    std.addstr(1, 0, "Вы ударились о границу!")
-    std.addstr(2, 0, "Через 3 секунды игра закончится")
-    std.addstr(3, 0, "Текущий трай - " + str(snake.get_length()))
-    std.refresh()
-    time.sleep(3)
+
 
 
 def check_end_game(new_head, std, snake, obstacles=None):
     if (new_head[0] == 0 or new_head[0] == Constants.FIELD_HEIGHT or
             new_head[1] == 0 or new_head[1] == Constants.FIELD_WIDTH):
-        print_end(std, snake)
-        return True
+        if print_end(std, snake) == "play":
+            return "restart"
+        else:
+            return "brake"
 
     if obstacles is not None and new_head in obstacles:
-        print_end(std, snake)
-        return True
+        if print_end(std, snake) == "play":
+            return "restart"
+        else:
+            return "brake"
 
-    return False
+    return None

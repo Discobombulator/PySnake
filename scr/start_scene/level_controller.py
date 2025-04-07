@@ -4,13 +4,21 @@ from scr.game_scene.main_scene import start_game
 
 
 def level_controller(std):
-    key = std.getch()
+    while True:
+        key = std.getch()
+        if key in [ord('1'), ord('!')]:
+            level = 1
+        elif key in [ord('2'), ord('@')]:
+            level = 2
+        elif key in [ord('3'), ord('#')]:
+            level = 3
+        else:
+            continue  # если не выбрали уровень — ждём
 
-    if key in [ord('1'), ord('!')]:
-        return start_game(std, 1)
-    elif key in [ord('2'), ord('@')]:
-        return start_game(std, 2)
-    elif key in [ord('3'), ord('#')]:
-        return start_game(std, 3)
+        while True:
+            result = start_game(std, level)
 
-
+            if result == "brake":
+                return "brake"  # пользователь вышел
+            elif result == "play":
+                continue
