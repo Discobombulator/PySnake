@@ -1,7 +1,4 @@
-import curses
-import time
-
-from scr.controller.end_game_controller import playing_controller
+from scr.controllers.end_game_controller import playing_controller
 
 
 def print_end(std, snake):
@@ -9,7 +6,6 @@ def print_end(std, snake):
     std.addstr(0, 0, "Вы проиграли(((")
     std.addstr(1, 0, "Вы ударились о границу!")
     std.addstr(3, 0, "Текущий трай - " + str(snake.get_length()))
-    std.refresh()
     std.addstr(4, 0, "Выйти - [q]")
     std.addstr(5, 0, "Перезапустить - [Enter]")
     std.addstr(6, 0, "Введите: ")

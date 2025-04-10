@@ -1,5 +1,3 @@
-import curses
-
 from scr.logic.game import start_game
 
 

@@ -1,5 +1,3 @@
-import random
-
 from scr.constants import Constants
 
 
