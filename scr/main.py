@@ -1,13 +1,13 @@
 import curses
 import argparse
 
-from scr.start_scene.start_scene import start_work
+from scr.visual.start_scene import start_work
 
 
 def main(std):
     while True:
         result = start_work(std)
-        if result =="brake":
+        if result == "brake":
             break
 
 

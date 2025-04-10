@@ -2,11 +2,12 @@ import random
 import time
 
 from scr.constants import Constants
-from scr.game_scene.game_controller import game_controller, check_end_game
-from scr.game_scene.game_board import draw_board, generate_obstacles
-from scr.game_scene.snakes_food import create_food
-from scr.game_scene.snake import Snake
-from scr.start_scene.records import GameRecords
+from scr.controller.game_controller import game_controller, check_end_game
+from scr.logic.obtacles_gen import generate_obstacles
+from scr.visual.game_board import draw_board
+from scr.logic.snakes_food import create_food
+from scr.logic.snake import Snake
+from scr.logic.records import GameRecords
 
 
 def start_game(std, level):
@@ -14,7 +15,8 @@ def start_game(std, level):
     std.nodelay(True)
     std.timeout(100)
 
-    initial_position = (Constants.FIELD_HEIGHT // 2, Constants.FIELD_WIDTH // 2)
+    initial_position = (
+        Constants.FIELD_HEIGHT // 2, Constants.FIELD_WIDTH // 2)
     snake = Snake(initial_position, Constants.RIGHT)
 
     food = create_food(snake.body)
@@ -55,4 +57,3 @@ def start_game(std, level):
             time.sleep(horizontal_delay)
         else:
             time.sleep(vertical_delay)
-

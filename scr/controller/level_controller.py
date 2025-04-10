@@ -1,6 +1,6 @@
 import curses
 
-from scr.game_scene.main_scene import start_game
+from scr.logic.game import start_game
 
 
 def level_controller(std):

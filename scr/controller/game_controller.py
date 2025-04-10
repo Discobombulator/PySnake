@@ -1,8 +1,7 @@
 import curses
-import time
 
 from scr.constants import Constants
-from scr.end_scene.end_scene import print_end
+from scr.visual.end_scene import print_end
 
 
 def game_controller(direction, std):
@@ -20,9 +19,6 @@ def game_controller(direction, std):
         return "brake"
 
     return direction
-
-
-
 
 
 def check_end_game(new_head, std, snake, obstacles=None):

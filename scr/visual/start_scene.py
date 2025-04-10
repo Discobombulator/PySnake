@@ -1,5 +1,5 @@
-from scr.start_scene.level_controller import level_controller
-from scr.start_scene.records import GameRecords
+from scr.controller.level_controller import level_controller
+from scr.logic.records import GameRecords
 
 
 def start_work(std):
