@@ -1,12 +1,18 @@
 class Constants:
 
-    FIELD_HEIGHT = 30
-    FIELD_WIDTH = 90
+    FIELD_HEIGHT = 300
+    FIELD_WIDTH = 900
 
-    SNAKE_CHAR = '#'
-    FOOD_CHAR1 = '*'
-    FOOD_CHAR2 = '@'
-    BORDER_CHAR = '+'
+    VIEW_HEIGHT = 30
+    VIEW_WIDTH = 90
+
+    SNAKE_CHAR = '◆'
+    FOOD_CHAR1 = '●'
+    FOOD_CHAR2 = '◍'
+    FOOD_CHAR3 = '◉'
+
+    BORDER_CHAR = '■'
+    OBSTACLE_CHAR = '■'
 
     UP = (-1, 0)
     DOWN = (1, 0)

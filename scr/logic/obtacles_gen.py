@@ -9,10 +9,10 @@ def generate_obstacles(snake, food, level):
     available = [cell for cell in total_cells if cell not in snake.body
                  and cell != food]
     if level == 2:
-        num_obstacles = random.randint(10, 30)
+        num_obstacles = random.randint(5000, 10000)
         return set(random.sample(available, num_obstacles))
     elif level == 3:
-        num_obstacles = random.randint(60, 100)
+        num_obstacles = random.randint(10000, 15000)
         return set(random.sample(available, num_obstacles))
 
     else:

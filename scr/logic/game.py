@@ -5,7 +5,7 @@ from scr.constants import Constants
 from scr.controllers.game_controller import game_controller, check_end_game
 from scr.logic.obtacles_gen import generate_obstacles
 from scr.visual.game_board import draw_board
-from scr.logic.snakes_food import create_food
+from scr.logic.snakes_food import create_food, create_food_set
 from scr.logic.snake import Snake
 from scr.logic.records import GameRecords
 
@@ -19,14 +19,14 @@ def start_game(std, level):
         Constants.FIELD_HEIGHT // 2, Constants.FIELD_WIDTH // 2)
     snake = Snake(initial_position, Constants.RIGHT)
 
-    food = create_food(snake.body)
-    i = random.randint(1, 2)
-    obstacles = generate_obstacles(snake, food, level)
+    obstacles = generate_obstacles(snake, None, level)
+    food_list = create_food_set(snake.body, obstacles, count=1000)
+
     horizontal_delay = 0.1
     vertical_delay = 0.1 * Constants.SPEED_RATIO
 
     while True:
-        draw_board(snake, food, std, i, level=level, obstacles=obstacles)
+        draw_board(snake, food_list, std, level=level, obstacles=obstacles)
 
         make_step = game_controller(snake.direction, std)
         if make_step == "brake":
@@ -35,24 +35,28 @@ def start_game(std, level):
         snake.update_direction(make_step)
 
         next_head = snake.get_next_head()
-
         game_status = check_end_game(next_head, std, snake, obstacles)
         if game_status == "brake":
             records.set_data(snake.get_length())
             return "brake"
         elif game_status == "restart":
-            return "play"  # просто продолжаем цикл
+            return "play"
 
-        if next_head == food.position:
-            snake.move(grow=True)
-            for _ in range(
-                    food.get_growth() - 1):  # уже вырос на 1, добавим остальное
+        eaten = None
+        for food in food_list:
+            if next_head == food.position:
+                eaten = food
+                break
+
+        if eaten:
+            food_list.remove(eaten)
+            for _ in range(eaten.get_growth()):
                 snake.move(grow=True)
-            food = create_food(snake.body)
+            new_food = create_food_set(snake.body, obstacles, count=1)
+            food_list.extend(new_food)
         else:
             snake.move(grow=False)
 
-        # Разное время ожидания в зависимости от направления
         if snake.direction in [Constants.LEFT, Constants.RIGHT]:
             time.sleep(horizontal_delay)
         else:
