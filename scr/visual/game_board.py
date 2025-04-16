@@ -1,3 +1,5 @@
+import curses
+
 from scr.constants import Constants
 
 def get_viewport_centered_on(head):
@@ -13,6 +15,10 @@ def get_viewport_centered_on(head):
 def draw_board(snake, food_list, std, level=1, obstacles=None):
     std.clear()
 
+    curses.start_color()
+    curses.use_default_colors()  # ВАЖНО: позволяет использовать прозрачный фон
+    curses.init_pair(1, curses.COLOR_GREEN, -1)  # Зелёный на прозрачном
+
     head = snake.body[0]
     top, left = get_viewport_centered_on(head)
 
@@ -21,24 +27,35 @@ def draw_board(snake, food_list, std, level=1, obstacles=None):
 
     for row_offset in range(Constants.VIEW_HEIGHT):
         row = top + row_offset
-        line = Constants.BORDER_CHAR
         for col_offset in range(Constants.VIEW_WIDTH):
             col = left + col_offset
             cell = (row, col)
 
             symbol = ' '
+            color = 0  # Нет цвета по умолчанию
+
             if any(food.position == cell for food in food_list):
                 food = next(f for f in food_list if f.position == cell)
                 symbol = food.get_char()
+                color = curses.color_pair(1)  # Еда — зелёная
+
             elif cell in snake.body:
                 symbol = Constants.SNAKE_CHAR
+
             elif level in [2, 3] and obstacles and cell in obstacles:
                 symbol = Constants.OBSTACLE_CHAR
 
-            line += symbol
-        line += Constants.BORDER_CHAR
-        std.addstr(row_offset + 1, 0, line)
+            std.addstr(row_offset + 1, col_offset + 1, symbol, color)
 
+        # Границы слева и справа
+        std.addstr(row_offset + 1, 0, Constants.BORDER_CHAR)
+        std.addstr(row_offset + 1, Constants.VIEW_WIDTH + 1,
+                   Constants.BORDER_CHAR)
+
+    # Верх и низ
+    border_line = Constants.BORDER_CHAR * (Constants.VIEW_WIDTH + 2)
+    std.addstr(0, 0, border_line)
     std.addstr(Constants.VIEW_HEIGHT + 1, 0, border_line)
+
     std.refresh()
 
