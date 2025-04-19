@@ -1,11 +1,10 @@
-import random
 import time
 
 from scr.constants import Constants
 from scr.controllers.game_controller import game_controller, check_end_game
 from scr.logic.obtacles_gen import generate_obstacles
 from scr.visual.game_board import draw_board
-from scr.logic.snakes_food import create_food, create_food_set
+from scr.logic.snakes_food import create_food_set
 from scr.logic.snake import Snake
 from scr.logic.records import GameRecords
 
