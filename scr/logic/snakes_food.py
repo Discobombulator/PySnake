@@ -29,7 +29,7 @@ def create_food_set(snake_body, obstacles, count=800):
 class SnakesFood:
     def __init__(self, position, food_type):
         self.position = position
-        self.food_type = food_type  # 1 или 2
+        self.food_type = food_type  # 1 или 2, или 3
 
     def get_char(self):
         if self.food_type == 1:

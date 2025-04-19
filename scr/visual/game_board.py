@@ -16,8 +16,8 @@ def draw_board(snake, food_list, std, level=1, obstacles=None):
     std.clear()
 
     curses.start_color()
-    curses.use_default_colors()  # ВАЖНО: позволяет использовать прозрачный фон
-    curses.init_pair(1, curses.COLOR_GREEN, -1)  # Зелёный на прозрачном
+    curses.use_default_colors()
+    curses.init_pair(1, curses.COLOR_GREEN, -1)
 
     head = snake.body[0]
     top, left = get_viewport_centered_on(head)
@@ -34,10 +34,16 @@ def draw_board(snake, food_list, std, level=1, obstacles=None):
             symbol = ' '
             color = 0  # Нет цвета по умолчанию
 
-            if any(food.position == cell for food in food_list):
-                food = next(f for f in food_list if f.position == cell)
+            food = None
+
+            for f in food_list:
+                if f.position == cell:
+                    food = f
+                    break
+
+            if food is not None:
                 symbol = food.get_char()
-                color = curses.color_pair(1)  # Еда — зелёная
+                color = curses.color_pair(1)
 
             elif cell in snake.body:
                 symbol = Constants.SNAKE_CHAR
