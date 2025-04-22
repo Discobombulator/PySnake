@@ -1,6 +1,6 @@
 import curses
 
-from scr.constants import Constants
+from constants import Constants
 
 
 def get_viewport_centered_on(head):

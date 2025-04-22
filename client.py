@@ -1,10 +1,10 @@
 import socket
 import json
 import curses
-from scr.constants import Constants
-from scr.logic.snake import Snake
-from scr.logic.snakes_food import SnakesFood
-from scr.visual.game_board import draw_board
+from constants import Constants
+from logic.snake import Snake
+from logic.snakes_food import SnakesFood
+from visual.game_board import draw_board
 
 SERVER_IP = '127.0.0.1'
 PORT = 12345

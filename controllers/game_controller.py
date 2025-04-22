@@ -1,7 +1,7 @@
 import curses
 
-from scr.constants import Constants
-from scr.visual.end_scene import print_end
+from constants import Constants
+from visual.end_scene import print_end
 
 
 def game_controller(direction, std):

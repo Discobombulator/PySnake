@@ -1,7 +1,7 @@
 import curses
 import argparse
 
-from scr.visual.start_scene import start_work
+from visual.start_scene import start_work
 
 
 def main(std):
