@@ -20,3 +20,11 @@ class Constants:
     RIGHT = (0, 1)
 
     SPEED_RATIO = 3
+    TICK_RATE = 0.1
+
+    DIRECTIONS = {
+        'UP': (-1, 0),
+        'DOWN': (1, 0),
+        'LEFT': (0, -1),
+        'RIGHT': (0, 1)
+    }

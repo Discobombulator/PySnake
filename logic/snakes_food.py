@@ -1,16 +1,6 @@
 from constants import Constants
 import random
 
-
-def create_food(snake):
-    while True:
-        pos = (random.randint(0, Constants.FIELD_HEIGHT - 1),
-               random.randint(0, Constants.FIELD_WIDTH - 1))
-        if pos not in snake:
-            food_type = random.randint(1, 2)
-            return SnakesFood(pos, food_type)
-
-
 def create_food_set(snake_body, obstacles, count=800):
     food_set = set()
     while len(food_set) < count:
