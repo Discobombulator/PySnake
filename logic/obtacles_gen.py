@@ -1,6 +1,6 @@
 import random
 
-from scr.constants import Constants
+from constants import Constants
 
 
 def generate_obstacles(snake, food, level):

@@ -1,4 +1,4 @@
-from scr.controllers.end_game_controller import playing_controller
+from controllers.end_game_controller import playing_controller
 
 
 def print_end(std, snake):
