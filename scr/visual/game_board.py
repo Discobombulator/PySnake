@@ -2,19 +2,15 @@ import curses
 
 from scr.constants import Constants
 
-
 def get_viewport_centered_on(head):
     row, col = head
     half_height = Constants.VIEW_HEIGHT // 2
     half_width = Constants.VIEW_WIDTH // 2
 
-    top = max(0, min(Constants.FIELD_HEIGHT - Constants.VIEW_HEIGHT,
-                     row - half_height))
-    left = max(0, min(Constants.FIELD_WIDTH - Constants.VIEW_WIDTH,
-                      col - half_width))
+    top = max(0, min(Constants.FIELD_HEIGHT - Constants.VIEW_HEIGHT, row - half_height))
+    left = max(0, min(Constants.FIELD_WIDTH - Constants.VIEW_WIDTH, col - half_width))
 
     return top, left
-
 
 def draw_board(snake, food_list, std, level=1, obstacles=None):
     std.clear()
@@ -68,3 +64,4 @@ def draw_board(snake, food_list, std, level=1, obstacles=None):
     std.addstr(Constants.VIEW_HEIGHT + 1, 0, border_line)
 
     std.refresh()
+

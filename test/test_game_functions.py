@@ -22,8 +22,7 @@ class TestGameFunctions(unittest.TestCase):
         stdscr = MagicMock()
 
         stdscr.getch.return_value = curses.KEY_UP
-        self.assertEqual(game_controller(Constants.RIGHT, stdscr),
-                         Constants.UP)
+        self.assertEqual(game_controller(Constants.RIGHT, stdscr), Constants.UP)
 
         stdscr.getch.return_value = ord('q')
         self.assertEqual(game_controller(Constants.RIGHT, stdscr),
