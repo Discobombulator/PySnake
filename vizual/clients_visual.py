@@ -16,7 +16,7 @@ def get_viewport_centered_on(head):
     return top, left
 
 
-def draw_board(state, std, player_id_str, current_direction):
+def draw_board_mult(state, std, player_id_str, current_direction):
     """Отрисовка игрового поля"""
     snakes = state.get('snakes', {})
     food_list = state.get('food', [])
@@ -29,16 +29,6 @@ def draw_board(state, std, player_id_str, current_direction):
             obstacle_set.add(tuple(obstacle))
         else:
             obstacle_set.add(obstacle)
-
-    # Проверки безопасности
-    if player_id_str not in snakes:
-        std.addstr(0, 0,
-                   f"Игрок {player_id_str} не найден в списке змей: {list(snakes.keys())}")
-        return
-
-    if not snakes[player_id_str]:
-        std.addstr(0, 0, f"Змея игрока {player_id_str} пуста!")
-        return
 
     # Получаем координаты головы змеи игрока
     head = snakes[player_id_str][0]  # Первый элемент - голова
@@ -89,17 +79,19 @@ def draw_board(state, std, player_id_str, current_direction):
                 for pid, snake_body in snakes.items():
                     if pid != player_id_str:
                         for i, part in enumerate(snake_body):
-                            part_pos = tuple(part) if isinstance(part,
-                                                                 list) else part
+                            part_pos = tuple(part) \
+                                if isinstance(part, list) else part
                             if cell == part_pos:
-                                symbol = '#' if i == 0 else Constants.SNAKE_CHAR
+                                symbol = '#' if i == 0 \
+                                    else Constants.SNAKE_CHAR
                                 color = curses.color_pair(4)
                                 break
 
             # Проверка еды - теперь обрабатываем список объектов еды
             for food_item in food_list:
-                if isinstance(food_item,
-                              dict) and 'position' in food_item and 'food_type' in food_item:
+                if (isinstance(food_item,
+                              dict) and 'position' in food_item and
+                        'food_type' in food_item):
                     # Получаем позицию еды
                     pos = food_item['position']
                     food_type = food_item['food_type']
@@ -137,17 +129,14 @@ def draw_board(state, std, player_id_str, current_direction):
                curses.color_pair(3))
 
     # Отображение статистики
-    std.addstr(2, Constants.VIEW_WIDTH + 5, f"Игрок ID: {player_id_str}")
-    std.addstr(4, Constants.VIEW_WIDTH + 5,
+    std.addstr(4, Constants.VIEW_WIDTH + 5, f"Игрок ID: {player_id_str}")
+    std.addstr(8, Constants.VIEW_WIDTH + 5,
                f"Длина змеи: {len(snakes[player_id_str])}")
-    std.addstr(6, Constants.VIEW_WIDTH + 5,
-               f"Направление: {current_direction}")
-    std.addstr(8, Constants.VIEW_WIDTH + 5, f"Всего змей: {len(snakes)}")
     std.addstr(10, Constants.VIEW_WIDTH + 5,
+               f"Направление: {current_direction}")
+    std.addstr(12, Constants.VIEW_WIDTH + 5, f"Всего змей: {len(snakes)}")
+    std.addstr(14, Constants.VIEW_WIDTH + 5,
                f"Голова: {snakes[player_id_str][0]}")
-    std.addstr(12, Constants.VIEW_WIDTH + 5,
-               f"Количество еды: {len(food_list)}")
-    std.addstr(14, Constants.VIEW_WIDTH + 5, f"Препятствий: {len(obstacles)}")
 
     # Добавляем легенду еды и препятствий
     std.addstr(16, Constants.VIEW_WIDTH + 5, "Легенда:")

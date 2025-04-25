@@ -1,5 +1,4 @@
 class Constants:
-
     FIELD_HEIGHT = 300
     FIELD_WIDTH = 900
 
@@ -21,7 +20,7 @@ class Constants:
 
     SPEED_RATIO = 6
     TICK_RATE = 0.3
-    CLIENT_FRAME_DELAY = 0.2  # Задержка между обновлениями на клиенте
+    CLIENT_FRAME_DELAY = 0.2
     DIRECTIONS = {
         'UP': (-1, 0),
         'DOWN': (1, 0),
