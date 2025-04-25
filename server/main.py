@@ -21,12 +21,27 @@ class GameServer:
         self.lock = Lock()
         self.running = False
 
+    def get_safe_position(self):
+        """Получение безопасного положения для спавна змеи"""
+        while True:
+            pos = (random.randint(1, Constants.FIELD_HEIGHT - 2),
+                   random.randint(1, Constants.FIELD_WIDTH - 2))
+
+            # Проверка, что позиция не занята едой
+            if not any(pos == food.position for food in self.food_list):
+                # Проверка, что позиция не занята другими змеями
+                if not any(pos in snake['body'] for snake in
+                           self.snakes.values()):
+                    # Проверка, что позиция не занята препятствиями
+                    if pos not in self.obstacles:
+                        return pos
+
     def init_player(self, player_id):
         with self.lock:
-            # Инициализация змеи для игрока
+            # Инициализация змеи для игрока с безопасной позицией
+            safe_pos = self.get_safe_position()
             self.snakes[player_id] = {
-                'body': [(random.randint(1, Constants.FIELD_HEIGHT - 2),
-                          random.randint(1, Constants.FIELD_WIDTH - 2))],
+                'body': [safe_pos],
                 'direction': 'RIGHT'
             }
             self.directions[player_id] = 'RIGHT'
@@ -70,10 +85,8 @@ class GameServer:
                         # Удаляем съеденную еду
                         self.food_list.pop(i)
 
-                        # Создаем новую еду
-                        new_food_pos = (
-                        random.randint(1, Constants.FIELD_HEIGHT - 2),
-                        random.randint(1, Constants.FIELD_WIDTH - 2))
+                        # Создаем новую еду на безопасной позиции
+                        new_food_pos = self.get_safe_position()
                         self.food_list.append(
                             SnakesFood(new_food_pos, random.randint(1, 3)))
 
@@ -87,10 +100,8 @@ class GameServer:
     def reset_player(self, player_id):
         """Сброс позиции игрока"""
         with self.lock:
-            self.snakes[player_id]['body'] = [
-                (random.randint(1, Constants.FIELD_HEIGHT - 2),
-                 random.randint(1, Constants.FIELD_WIDTH - 2))
-            ]
+            safe_pos = self.get_safe_position()
+            self.snakes[player_id]['body'] = [safe_pos]
             self.directions[player_id] = 'RIGHT'
 
     def handle_client(self, conn, addr, player_id):
@@ -145,8 +156,14 @@ class GameServer:
         # Создаем начальную еду (10 единиц еды)
         self.food_list = []
         for _ in range(189):
-            pos = (random.randint(1, Constants.FIELD_HEIGHT - 2),
-                   random.randint(1, Constants.FIELD_WIDTH - 2))
+            while True:
+                pos = (random.randint(1, Constants.FIELD_HEIGHT - 2),
+                       random.randint(1, Constants.FIELD_WIDTH - 2))
+
+                # Проверяем, что новая позиция не совпадает с уже существующей едой
+                if not any(pos == food.position for food in self.food_list):
+                    break
+
             food_type = random.randint(1, 3)
             self.food_list.append(SnakesFood(pos, food_type))
 
