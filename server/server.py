@@ -36,28 +36,6 @@ class GameServer:
                     if pos not in self.obstacles:
                         return pos
 
-    def generate_obstacles(self, count):
-        """Генерация препятствий"""
-        obstacles = set()
-        attempts = 0
-        max_attempts = count * 10  # Максимальное количество попыток для избежания бесконечного цикла
-
-        while len(obstacles) < count and attempts < max_attempts:
-            pos = (random.randint(1, Constants.FIELD_HEIGHT - 2),
-                   random.randint(1, Constants.FIELD_WIDTH - 2))
-
-            # Проверка, что позиция не занята едой
-            if not any(pos == food.position for food in self.food_list):
-                # Проверка, что позиция не занята другими змеями
-                if not any(pos in snake['body'] for snake in
-                           self.snakes.values()):
-                    # Проверка, что позиция не уже выбрана как препятствие
-                    if pos not in obstacles:
-                        obstacles.add(pos)
-
-            attempts += 1
-
-        return obstacles
 
     def init_player(self, player_id):
         with self.lock:
@@ -208,7 +186,7 @@ class GameServer:
         """Генерация еды и препятствий"""
         # Создаем начальную еду (10 единиц еды)
         self.food_list = []
-        for _ in range(10):
+        for _ in range(80):
             # При первоначальной генерации еды змей ещё нет,
             # поэтому проверяем только на пересечение с другой едой
             while True:
@@ -225,7 +203,7 @@ class GameServer:
         # Генерация препятствий (от 300 до 400)
         obstacle_count = random.randint(300, 400)
         print(f"Generating {obstacle_count} obstacles...")
-        self.obstacles = self.generate_obstacles(obstacle_count)
+        self.obstacles = generate_obstacles(self,obstacle_count)
         print(f"Generated {len(self.obstacles)} obstacles")
 
     def start(self):
@@ -260,6 +238,28 @@ class GameServer:
         self.socket.close()
         print("Server stopped")
 
+def generate_obstacles(self, count):
+    """Генерация препятствий"""
+    obstacles = set()
+    attempts = 0
+    max_attempts = count * 10  # Максимальное количество попыток для избежания бесконечного цикла
+
+    while len(obstacles) < count and attempts < max_attempts:
+        pos = (random.randint(1, Constants.FIELD_HEIGHT - 2),
+               random.randint(1, Constants.FIELD_WIDTH - 2))
+
+        # Проверка, что позиция не занята едой
+        if not any(pos == food.position for food in self.food_list):
+            # Проверка, что позиция не занята другими змеями
+            if not any(pos in snake['body'] for snake in
+                       self.snakes.values()):
+                # Проверка, что позиция не уже выбрана как препятствие
+                if pos not in obstacles:
+                    obstacles.add(pos)
+
+        attempts += 1
+
+    return obstacles
 
 if __name__ == '__main__':
     server = GameServer()

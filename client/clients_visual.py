@@ -157,9 +157,3 @@ def draw_board(state, std, player_id_str, current_direction):
                f"{Constants.FOOD_CHAR2} - еда +2", curses.color_pair(5))
     std.addstr(19, Constants.VIEW_WIDTH + 5,
                f"{Constants.FOOD_CHAR3} - еда +3", curses.color_pair(6))
-    std.addstr(20, Constants.VIEW_WIDTH + 5,
-               f"{Constants.OBSTACLE_CHAR} - препятствие",
-               curses.color_pair(7))
-    std.addstr(21, Constants.VIEW_WIDTH + 5, "@/#  - голова змеи")
-    std.addstr(22, Constants.VIEW_WIDTH + 5,
-               f"{Constants.SNAKE_CHAR} - тело змеи")

@@ -1,18 +1,21 @@
 from constants import Constants
 
+
 class Snake:
     def __init__(self, initial_position, initial_direction):
         self.body = [initial_position]
         # Убедимся, что направление - это кортеж, а не строка
         if isinstance(initial_direction, str):
-            self.direction = Constants.DIRECTIONS.get(initial_direction, Constants.RIGHT)
+            self.direction = Constants.DIRECTIONS.get(initial_direction,
+                                                      Constants.RIGHT)
         else:
             self.direction = initial_direction
 
     def update_direction(self, new_direction):
         # Аналогично для нового направления
         if isinstance(new_direction, str):
-            self.direction = Constants.DIRECTIONS.get(new_direction, self.direction)
+            self.direction = Constants.DIRECTIONS.get(new_direction,
+                                                      self.direction)
         else:
             self.direction = new_direction
 

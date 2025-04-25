@@ -3,9 +3,7 @@ import socket
 import threading
 import time
 
-from client.visuals import draw_board
-from constants import Constants
-from logic import snake
+from client.clients_visual import draw_board
 from network import encode, decode, KEYS
 
 

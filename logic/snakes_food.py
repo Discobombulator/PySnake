@@ -1,6 +1,7 @@
 from constants import Constants
 import random
 
+
 def create_food_set(snake_body, obstacles, count=800):
     food_set = set()
     while len(food_set) < count:

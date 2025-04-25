@@ -5,11 +5,9 @@ import json
 import json
 
 def encode(data):
-    """Encode data to bytes for network transmission"""
     return json.dumps(data).encode('utf-8')
 
 def decode(data):
-    """Decode bytes from network to Python object"""
     return json.loads(data.decode('utf-8'))
 
 KEYS = {
@@ -17,7 +15,7 @@ KEYS = {
     ord('a'): 'LEFT',
     ord('s'): 'DOWN',
     ord('d'): 'RIGHT',
-    ord('ц'): 'UP',    # Russian keyboard layout
+    ord('ц'): 'UP',
     ord('ф'): 'LEFT',
     ord('ы'): 'DOWN',
     ord('в'): 'RIGHT',

@@ -19,8 +19,8 @@ class Constants:
     LEFT = (0, -1)
     RIGHT = (0, 1)
 
-    SPEED_RATIO = 3
-    TICK_RATE = 0.2
+    SPEED_RATIO = 6
+    TICK_RATE = 0.3
     CLIENT_FRAME_DELAY = 0.2  # Задержка между обновлениями на клиенте
     DIRECTIONS = {
         'UP': (-1, 0),
