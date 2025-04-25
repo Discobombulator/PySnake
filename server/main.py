@@ -4,8 +4,8 @@ import time
 import random
 from threading import Lock
 from constants import Constants
-from logic.obtacles_gen import generate_obstacles
-from logic.snakes_food import create_food_set, SnakesFood
+from game_controller import check_end_game
+from logic.snakes_food import SnakesFood
 from network import encode, decode
 
 
@@ -36,6 +36,29 @@ class GameServer:
                     if pos not in self.obstacles:
                         return pos
 
+    def generate_obstacles(self, count):
+        """Генерация препятствий"""
+        obstacles = set()
+        attempts = 0
+        max_attempts = count * 10  # Максимальное количество попыток для избежания бесконечного цикла
+
+        while len(obstacles) < count and attempts < max_attempts:
+            pos = (random.randint(1, Constants.FIELD_HEIGHT - 2),
+                   random.randint(1, Constants.FIELD_WIDTH - 2))
+
+            # Проверка, что позиция не занята едой
+            if not any(pos == food.position for food in self.food_list):
+                # Проверка, что позиция не занята другими змеями
+                if not any(pos in snake['body'] for snake in
+                           self.snakes.values()):
+                    # Проверка, что позиция не уже выбрана как препятствие
+                    if pos not in obstacles:
+                        obstacles.add(pos)
+
+            attempts += 1
+
+        return obstacles
+
     def init_player(self, player_id):
         with self.lock:
             # Инициализация змеи для игрока с безопасной позицией
@@ -50,7 +73,8 @@ class GameServer:
         """Обновление игрового состояния"""
         with self.lock:
             # Движение змей
-            for player_id, snake in self.snakes.items():
+            for player_id, snake in list(
+                    self.snakes.items()):  # Используем list() для итерации по копии
                 direction = self.directions.get(player_id, 'RIGHT')
                 head = snake['body'][0]
 
@@ -64,11 +88,33 @@ class GameServer:
                 else:  # RIGHT
                     new_head = (head[0], head[1] + 1)
 
-                # Проверка столкновений
-                if (new_head in self.obstacles or
-                        any(new_head in s['body'] for pid, s in
-                            self.snakes.items() if pid != player_id)):
-                    self.reset_player(player_id)
+                # Проверка условий гибели змеи
+                if check_end_game(new_head, player_id, self.snakes,
+                                       self.obstacles,
+                                       Constants.FIELD_HEIGHT,
+                                       Constants.FIELD_WIDTH):
+                    # Отправляем сообщение о завершении игры клиенту
+                    try:
+                        client_conn = self.clients.get(player_id)
+                        if client_conn:
+                            client_conn.sendall(encode(
+                                {'game_over': True, 'reason': 'collision'}))
+                    except Exception as e:
+                        print(
+                            f"Failed to send game over message to player {player_id}: {e}")
+
+                    # Удаляем игрока
+                    if player_id in self.snakes:
+                        del self.snakes[player_id]
+                    if player_id in self.directions:
+                        del self.directions[player_id]
+                    if player_id in self.clients:
+                        try:
+                            self.clients[player_id].close()
+                        except:
+                            pass
+                        del self.clients[player_id]
+
                     continue
 
                 snake['body'].insert(0, new_head)
@@ -126,6 +172,8 @@ class GameServer:
     def game_loop(self):
         """Основной игровой цикл"""
         while self.running:
+            start_time = time.time()
+
             self.update_game()
 
             # Подготовка состояния для отправки
@@ -137,6 +185,8 @@ class GameServer:
             state = {
                 'snakes': {pid: s['body'] for pid, s in self.snakes.items()},
                 'food': food_data,
+                'obstacles': list(self.obstacles),
+                # Преобразуем множество в список
                 'size': (Constants.FIELD_HEIGHT, Constants.FIELD_WIDTH)
             }
 
@@ -149,13 +199,18 @@ class GameServer:
                 except:
                     continue
 
-            time.sleep(Constants.TICK_RATE)
+            # Более точная задержка для поддержания желаемой частоты обновления
+            elapsed = time.time() - start_time
+            sleep_time = max(0, Constants.TICK_RATE - elapsed)
+            time.sleep(sleep_time)
 
     def generate_world(self):
         """Генерация еды и препятствий"""
         # Создаем начальную еду (10 единиц еды)
         self.food_list = []
-        for _ in range(189):
+        for _ in range(10):
+            # При первоначальной генерации еды змей ещё нет,
+            # поэтому проверяем только на пересечение с другой едой
             while True:
                 pos = (random.randint(1, Constants.FIELD_HEIGHT - 2),
                        random.randint(1, Constants.FIELD_WIDTH - 2))
@@ -167,8 +222,11 @@ class GameServer:
             food_type = random.randint(1, 3)
             self.food_list.append(SnakesFood(pos, food_type))
 
-        # Здесь можно добавить генерацию препятствий при необходимости
-        # self.obstacles = generate_obstacles(None, None)
+        # Генерация препятствий (от 300 до 400)
+        obstacle_count = random.randint(300, 400)
+        print(f"Generating {obstacle_count} obstacles...")
+        self.obstacles = self.generate_obstacles(obstacle_count)
+        print(f"Generated {len(self.obstacles)} obstacles")
 
     def start(self):
         """Запуск сервера"""

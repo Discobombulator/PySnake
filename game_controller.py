@@ -1,29 +1,26 @@
-import curses
+def check_end_game(head_position, player_id, snakes, obstacles, field_height,
+                   field_width):
+    # Проверка 1: Столкновение со стенами поля
+    row, col = head_position
+    if row < 0 or row >= field_height or col < 0 or col >= field_width:
+        return True
 
-from constants import Constants
-from network import encode, KEYS
+    # Проверка 2: Столкновение с препятствием
+    if head_position in obstacles:
+        return True
 
+    # Проверка 3: Столкновение с другими змеями
+    # Перебираем всех змей и проверяем, не пересекается ли голова с телами других змей
+    for snake_id, snake_data in snakes.items():
+        snake_body = snake_data['body']
 
-def game_controller(direction, self, std):
-    key = std.getch()
+        # Если это другая змея - проверяем столкновение с любой частью её тела
+        if snake_id != player_id and head_position in snake_body:
+            return True
 
+        # Если это наша змея - проверяем столкновение только с её телом (кроме головы)
+        elif snake_id == player_id and head_position in snake_body[1:]:
+            return True
 
-    if key in [ord('q'), ord('й')]:
-        return "brake"
-    if key in KEYS:
-        new_dir = KEYS[key]
-        if new_dir != direction:
-            direction = new_dir
-    return direction
-
-
-
-
-
-def check_end_game(new_head, obstacles=None):
-    if (new_head[0] == 0 or new_head[0] == Constants.FIELD_HEIGHT or
-            new_head[1] == 0 or new_head[1] == Constants.FIELD_WIDTH):
-        return "brake"
-
-    if obstacles is not None and new_head in obstacles:
-        return "brake"
+    # Если ни одно из условий смерти не выполнено, змея остается жива
+    return False

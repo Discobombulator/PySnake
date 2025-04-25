@@ -1,7 +1,6 @@
 import curses
 
 from constants import Constants
-from game_controller import check_end_game
 
 
 def get_viewport_centered_on(head):
@@ -21,7 +20,15 @@ def draw_board(state, std, player_id_str, current_direction):
     """Отрисовка игрового поля"""
     snakes = state.get('snakes', {})
     food_list = state.get('food', [])
-    obstacles = set(state.get('obstacles', []))
+    obstacles = state.get('obstacles', [])
+
+    # Преобразуем список препятствий в множество для быстрой проверки наличия
+    obstacle_set = set()
+    for obstacle in obstacles:
+        if isinstance(obstacle, list):
+            obstacle_set.add(tuple(obstacle))
+        else:
+            obstacle_set.add(obstacle)
 
     # Проверки безопасности
     if player_id_str not in snakes:
@@ -46,6 +53,7 @@ def draw_board(state, std, player_id_str, current_direction):
     curses.init_pair(4, curses.COLOR_YELLOW, -1)  # Чужие змеи
     curses.init_pair(5, curses.COLOR_BLUE, -1)  # Еда тип 2
     curses.init_pair(6, curses.COLOR_MAGENTA, -1)  # Еда тип 3
+    curses.init_pair(7, curses.COLOR_CYAN, -1)  # Препятствия
 
     # Отрисовка верхней границы
     border_line = Constants.BORDER_CHAR * (Constants.VIEW_WIDTH + 2)
@@ -114,9 +122,9 @@ def draw_board(state, std, player_id_str, current_direction):
                         break
 
             # Проверка, является ли клетка препятствием
-            if cell in obstacles:
+            if cell in obstacle_set:
                 symbol = Constants.OBSTACLE_CHAR
-                color = curses.color_pair(3)
+                color = curses.color_pair(7)  # Cyan color for obstacles
 
             std.addstr(row_offset + 1, col_offset + 1, symbol, color)
 
@@ -139,12 +147,19 @@ def draw_board(state, std, player_id_str, current_direction):
                f"Голова: {snakes[player_id_str][0]}")
     std.addstr(12, Constants.VIEW_WIDTH + 5,
                f"Количество еды: {len(food_list)}")
+    std.addstr(14, Constants.VIEW_WIDTH + 5, f"Препятствий: {len(obstacles)}")
 
-    # Добавляем легенду еды
-    std.addstr(14, Constants.VIEW_WIDTH + 5, "Еда:")
-    std.addstr(15, Constants.VIEW_WIDTH + 5,
-               f"{Constants.FOOD_CHAR1} - 1 рост", curses.color_pair(2))
-    std.addstr(16, Constants.VIEW_WIDTH + 5,
-               f"{Constants.FOOD_CHAR2} - 2 рост", curses.color_pair(5))
+    # Добавляем легенду еды и препятствий
+    std.addstr(16, Constants.VIEW_WIDTH + 5, "Легенда:")
     std.addstr(17, Constants.VIEW_WIDTH + 5,
-               f"{Constants.FOOD_CHAR3} - 3 рост", curses.color_pair(6))
+               f"{Constants.FOOD_CHAR1} - еда +1", curses.color_pair(2))
+    std.addstr(18, Constants.VIEW_WIDTH + 5,
+               f"{Constants.FOOD_CHAR2} - еда +2", curses.color_pair(5))
+    std.addstr(19, Constants.VIEW_WIDTH + 5,
+               f"{Constants.FOOD_CHAR3} - еда +3", curses.color_pair(6))
+    std.addstr(20, Constants.VIEW_WIDTH + 5,
+               f"{Constants.OBSTACLE_CHAR} - препятствие",
+               curses.color_pair(7))
+    std.addstr(21, Constants.VIEW_WIDTH + 5, "@/#  - голова змеи")
+    std.addstr(22, Constants.VIEW_WIDTH + 5,
+               f"{Constants.SNAKE_CHAR} - тело змеи")

@@ -5,7 +5,6 @@ import time
 
 from client.visuals import draw_board
 from constants import Constants
-from game_controller import game_controller, check_end_game
 from logic import snake
 from network import encode, decode, KEYS
 
@@ -19,7 +18,7 @@ class SnakeClient:
         self.player_id_str = None  # Добавляем строковую версию ID
         self.direction = 'RIGHT'
         self.sock = None
-
+        self.game_over = False
 
     def recv_loop(self):
         """Цикл приема данных от сервера"""
@@ -39,11 +38,22 @@ class SnakeClient:
                         self.player_id_str = str(
                             self.player_id)  # Сохраняем строковую версию
 
+                    # Проверка на сообщение о завершении игры
+                    if 'game_over' in decoded_data and decoded_data[
+                        'game_over']:
+                        reason = decoded_data.get('reason', 'unknown')
+                        print(f"\nИгра окончена: {reason}")
+                        # Закрываем соединение
+                        self.sock.close()
+                        # Устанавливаем флаг завершения игры
+                        self.game_over = True
+                        break
+
                     if 'snakes' in decoded_data:
                         self.state = decoded_data
 
-
             except Exception as e:
+                print(f"Ошибка приема данных: {e}")
                 break
 
     def start(self, std):
@@ -54,6 +64,8 @@ class SnakeClient:
         try:
             self.sock.connect((self.server_ip, self.port))
         except Exception as e:
+            std.addstr(0, 0, f"Ошибка подключения: {e}")
+            std.refresh()
             time.sleep(3)
             return
 
@@ -68,8 +80,7 @@ class SnakeClient:
         time.time()
         frame_count = 0
 
-        while True:
-
+        while not self.game_over:  # Проверяем флаг завершения игры
             frame_count += 1
 
             # Обработка ввода
@@ -84,25 +95,29 @@ class SnakeClient:
                     elif key in [ord('q'), ord('й')]:
                         break
             except Exception as e:
+                std.addstr(0, 0, f"Ошибка ввода: {e}")
+                std.refresh()
                 break
 
             # Отрисовка игры
             try:
                 std.clear()
-
-                draw_board(self.state, std, self.player_id_str,
-                               self.direction)
-
+                draw_board(self.state, std, self.player_id_str, self.direction)
             except Exception as e:
                 std.addstr(0, 0, f"Ошибка отрисовки: {str(e)}")
                 std.refresh()
 
-            if self.direction in [Constants.LEFT, Constants.RIGHT]:
-                time.sleep(0.1)
-            else:
-                time.sleep(0.3) # Задержка для снижения нагрузки на CPU
+        # Если игра завершена, показываем сообщение
+        if self.game_over:
+            std.clear()
+            std.refresh()
+            std.getch()  # Ждем нажатия клавиши
 
-        self.sock.close()
+        try:
+            self.sock.close()
+        except:
+            pass
+
 
 if __name__ == '__main__':
     client = SnakeClient()
