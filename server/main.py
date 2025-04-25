@@ -5,6 +5,7 @@ import random
 from threading import Lock
 from constants import Constants
 from logic.obtacles_gen import generate_obstacles
+from logic.snakes_food import create_food_set, SnakesFood
 from network import encode, decode
 
 
@@ -29,15 +30,6 @@ class GameServer:
                 'direction': 'RIGHT'
             }
             self.directions[player_id] = 'RIGHT'
-
-            # Генерация еды и препятствий только для первого игрока
-            if len(self.snakes) == 1:
-                self.generate_world()
-
-    def generate_world(self):
-        """Генерация еды и препятствий"""
-        self.food_list = [(random.randint(1, Constants.FIELD_HEIGHT - 2)), (random.randint(1, Constants.FIELD_WIDTH - 2))]
-        # Здесь можно добавить генерацию препятствий при необходимости
 
     def update_game(self):
         """Обновление игрового состояния"""
@@ -67,10 +59,29 @@ class GameServer:
                 snake['body'].insert(0, new_head)
 
                 # Проверка еды
-                if new_head == tuple(self.food_list):
-                    self.food_list = [random.randint(1, Constants.FIELD_HEIGHT - 2),
-                                      random.randint(1, Constants.FIELD_WIDTH - 2)]
-                else:
+                ate_food = False
+                for i, food in enumerate(self.food_list):
+                    if new_head == food.position:
+                        # Увеличиваем змею в зависимости от типа еды
+                        growth = food.get_growth() - 1  # -1 потому что одно звено уже добавлено
+                        for _ in range(growth):
+                            snake['body'].append(snake['body'][-1])
+
+                        # Удаляем съеденную еду
+                        self.food_list.pop(i)
+
+                        # Создаем новую еду
+                        new_food_pos = (
+                        random.randint(1, Constants.FIELD_HEIGHT - 2),
+                        random.randint(1, Constants.FIELD_WIDTH - 2))
+                        self.food_list.append(
+                            SnakesFood(new_food_pos, random.randint(1, 3)))
+
+                        ate_food = True
+                        break
+
+                # Удаляем хвост, если еда не была съедена
+                if not ate_food:
                     snake['body'].pop()
 
     def reset_player(self, player_id):
@@ -107,9 +118,14 @@ class GameServer:
             self.update_game()
 
             # Подготовка состояния для отправки
+            # Преобразуем объекты еды в словари для сериализации
+            food_data = [
+                {'position': food.position, 'food_type': food.food_type}
+                for food in self.food_list]
+
             state = {
                 'snakes': {pid: s['body'] for pid, s in self.snakes.items()},
-                'food': self.food_list,
+                'food': food_data,
                 'size': (Constants.FIELD_HEIGHT, Constants.FIELD_WIDTH)
             }
 
@@ -124,6 +140,19 @@ class GameServer:
 
             time.sleep(Constants.TICK_RATE)
 
+    def generate_world(self):
+        """Генерация еды и препятствий"""
+        # Создаем начальную еду (10 единиц еды)
+        self.food_list = []
+        for _ in range(189):
+            pos = (random.randint(1, Constants.FIELD_HEIGHT - 2),
+                   random.randint(1, Constants.FIELD_WIDTH - 2))
+            food_type = random.randint(1, 3)
+            self.food_list.append(SnakesFood(pos, food_type))
+
+        # Здесь можно добавить генерацию препятствий при необходимости
+        # self.obstacles = generate_obstacles(None, None)
+
     def start(self):
         """Запуск сервера"""
         self.running = True
@@ -131,6 +160,7 @@ class GameServer:
         self.socket.bind((self.host, self.port))
         self.socket.listen()
         print(f"Server listening on {self.host}:{self.port}")
+        self.generate_world()
 
         # Запуск игрового цикла
         threading.Thread(target=self.game_loop, daemon=True).start()
