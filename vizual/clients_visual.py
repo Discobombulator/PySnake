@@ -90,7 +90,7 @@ def draw_board_mult(state, std, player_id_str, current_direction):
             # Проверка еды - теперь обрабатываем список объектов еды
             for food_item in food_list:
                 if (isinstance(food_item,
-                              dict) and 'position' in food_item and
+                               dict) and 'position' in food_item and
                         'food_type' in food_item):
                     # Получаем позицию еды
                     pos = food_item['position']
@@ -138,7 +138,7 @@ def draw_board_mult(state, std, player_id_str, current_direction):
     std.addstr(14, Constants.VIEW_WIDTH + 5,
                f"Голова: {snakes[player_id_str][0]}")
 
-    # Добавляем легенду еды и препятствий
+    # Добавляем легенду еды
     std.addstr(16, Constants.VIEW_WIDTH + 5, "Легенда:")
     std.addstr(17, Constants.VIEW_WIDTH + 5,
                f"{Constants.FOOD_CHAR1} - еда +1", curses.color_pair(2))

@@ -92,8 +92,20 @@ class SnakeClient:
                     from logic.network import KEYS
                     if key in KEYS:
                         new_dir = KEYS[key]
-                        if new_dir != self.direction:
+                        current_dir = self.direction
+
+                        invalid_turns = {
+                            'UP': 'DOWN',
+                            'DOWN': 'UP',
+                            'LEFT': 'RIGHT',
+                            'RIGHT': 'LEFT'
+                        }
+
+                        # Если новое направление не противоположно текущему
+                        if new_dir != invalid_turns.get(current_dir):
+                            # Установить направление локально немедленно
                             self.direction = new_dir
+                            # Отправить на сервер с высоким приоритетом
                             self.sock.sendall(encode({'dir': new_dir}))
                     elif key in [ord('q'), ord('й')]:
                         break
@@ -117,10 +129,10 @@ class SnakeClient:
                 std.addstr(0, 0, f"Ошибка отрисовки: {str(e)}")
                 std.refresh()
 
-            # Контроль частоты кадров
+
             frame_time = time.time() - current_time
-            if frame_time < 0.05:  # Не более 20 FPS
-                time.sleep(0.05 - frame_time)
+            if frame_time < 0.03:  # ~30 FPS is enough for smooth display
+                time.sleep(0.03 - frame_time)
 
         # Если игра завершена, показываем сообщение
         if self.game_over:

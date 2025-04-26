@@ -1,25 +1,21 @@
 import curses
 import json
 
-# Константа для разделения сообщений
-MESSAGE_DELIMITER = b'\n\n'
+from constants import Constants
 
 
 def encode(data):
-    """Кодирует данные в JSON и добавляет разделитель"""
     json_data = json.dumps(data).encode('utf-8')
-    return json_data + MESSAGE_DELIMITER
+    return json_data + Constants.MESSAGE_DELIMITER
 
 
 def decode_single(data):
-    """Декодирует одно сообщение из JSON"""
     return json.loads(data.decode('utf-8'))
 
 
 def decode_stream(buffer):
-    """Декодирует несколько сообщений из буфера"""
     messages = []
-    parts = buffer.split(MESSAGE_DELIMITER)
+    parts = buffer.split(Constants.MESSAGE_DELIMITER)
 
     # Последняя часть может быть неполной
     incomplete = parts.pop() if parts else b''

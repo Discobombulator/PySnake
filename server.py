@@ -144,7 +144,19 @@ class GameServer:
                 for decoded_data in messages:
                     if decoded_data and 'dir' in decoded_data:
                         with self.lock:
-                            self.directions[player_id] = decoded_data['dir']
+                            current_dir = self.directions.get(player_id,
+                                                              'RIGHT')
+                            new_dir = decoded_data['dir']
+
+                            invalid_turns = {
+                                'UP': 'DOWN',
+                                'DOWN': 'UP',
+                                'LEFT': 'RIGHT',
+                                'RIGHT': 'LEFT'
+                            }
+
+                            if new_dir != invalid_turns.get(current_dir):
+                                self.directions[player_id] = new_dir
         except Exception as e:
             print(f"Player {player_id} disconnected: {e}")
         finally:

@@ -19,11 +19,8 @@ class Constants:
     RIGHT = (0, 1)
 
     SPEED_RATIO = 6
-    TICK_RATE = 0.3
+    TICK_RATE = 0.4
+
     CLIENT_FRAME_DELAY = 0.2
-    DIRECTIONS = {
-        'UP': (-1, 0),
-        'DOWN': (1, 0),
-        'LEFT': (0, -1),
-        'RIGHT': (0, 1)
-    }
+
+    MESSAGE_DELIMITER = b'\n\n'

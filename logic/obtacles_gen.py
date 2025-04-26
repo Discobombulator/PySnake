@@ -1,11 +1,12 @@
 import random
 from constants import Constants
 
+
 def generate_obstacles_mult(self, count):
     """Генерация препятствий"""
     obstacles = set()
     attempts = 0
-    max_attempts = count * 10  # Максимальное количество попыток для избежания бесконечного цикла
+    max_attempts = count * 10
 
     while len(obstacles) < count and attempts < max_attempts:
         pos = (random.randint(1, Constants.FIELD_HEIGHT - 2),
@@ -24,19 +25,18 @@ def generate_obstacles_mult(self, count):
 
     return obstacles
 
-def generate_obstacles(snake, food):
+
+def generate_obstacles(snake, food, level):
     total_cells = [(row, col) for row in range(Constants.FIELD_HEIGHT)
                    for col in range(Constants.FIELD_WIDTH)]
+    available = [cell for cell in total_cells if cell not in snake.body
+                 and cell != food]
+    if level == 2:
+        num_obstacles = random.randint(5000, 10000)
+        return set(random.sample(available, num_obstacles))
+    elif level == 3:
+        num_obstacles = random.randint(10000, 15000)
+        return set(random.sample(available, num_obstacles))
 
-    # Исправленная проверка для snake и food
-    available = total_cells.copy()
-    if snake is not None:
-        available = [cell for cell in available if cell not in snake.body]
-    if food is not None:
-        available = [cell for cell in available if cell != food]
-
-    num_obstacles = random.randint(5000, 10000)
-
-    # Защита от случая, когда доступных клеток меньше, чем нужно препятствий
-    num_obstacles = min(num_obstacles, len(available))
-    return set(random.sample(available, num_obstacles))
+    else:
+        return []
