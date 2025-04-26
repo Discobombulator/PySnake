@@ -44,8 +44,8 @@ class SnakeClient:
                         self.player_id = decoded_data['your_id']
                         self.player_id_str = str(self.player_id)
 
-                    if 'game_over' in decoded_data and decoded_data[
-                        'game_over']:
+                    if ('game_over' in decoded_data and
+                            decoded_data['game_over']):
                         self.game_over = True
                         break
 
@@ -129,7 +129,6 @@ class SnakeClient:
                 std.addstr(0, 0, f"Ошибка отрисовки: {str(e)}")
                 std.refresh()
 
-
             frame_time = time.time() - current_time
             if frame_time < 0.03:  # ~30 FPS is enough for smooth display
                 time.sleep(0.03 - frame_time)
@@ -140,8 +139,8 @@ class SnakeClient:
 
         try:
             self.sock.close()
-        except:
-            pass
+        except Exception as e:
+            std.addstr(0, 0, f"Ошибка отрисовки: {str(e)}")
 
 
 if __name__ == '__main__':

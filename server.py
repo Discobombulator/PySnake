@@ -89,8 +89,8 @@ class GameServer:
                     if player_id in self.clients:
                         try:
                             self.clients[player_id].close()
-                        except:
-                            pass
+                        except Exception as e:
+                            print(f"Ошибка удаления: {str(e)}")
                         del self.clients[player_id]
 
                     continue
@@ -192,7 +192,8 @@ class GameServer:
                     personalized_state = state.copy()
                     personalized_state['your_id'] = player_id
                     conn.sendall(encode(personalized_state))
-                except:
+                except Exception as e:
+                    print(f"Ошибка отрисовки: {str(e)}")
                     continue
 
             # Более точная задержка для поддержания желаемой частоты обновления
