@@ -1,6 +1,6 @@
 class Constants:
-    FIELD_HEIGHT = 300
-    FIELD_WIDTH = 900
+    FIELD_HEIGHT = 200
+    FIELD_WIDTH = 600
 
     VIEW_HEIGHT = 30
     VIEW_WIDTH = 90

@@ -205,7 +205,7 @@ class GameServer:
         """Генерация еды и препятствий"""
         # Создаем начальную еду
         self.food_list = []
-        for _ in range(800):
+        for _ in range(400):
             # При первоначальной генерации еды змей ещё нет,
             # поэтому проверяем только на пересечение с другой едой
             while True:
@@ -219,7 +219,7 @@ class GameServer:
             self.food_list.append(SnakesFood(pos, food_type))
 
         # Генерация препятствий (от 300 до 400)
-        obstacle_count = random.randint(2000, 5000)
+        obstacle_count = random.randint(2, 5)
         print(f"Generating {obstacle_count} obstacles...")
         self.obstacles = generate_obstacles_mult(self, obstacle_count)
         print(f"Generated {len(self.obstacles)} obstacles")
