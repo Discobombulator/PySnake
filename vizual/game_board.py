@@ -18,6 +18,7 @@ def get_viewport_centered_on(head):
 
 def init_colors():
     # Убедимся, что терминал поддерживает цвета
+    curses.start_color()
     if curses.has_colors():
         curses.start_color()
 
