@@ -18,7 +18,7 @@ class TestGame(unittest.TestCase):
     @patch('logic.game.check_end_game')
     @patch('time.sleep')
     @patch('curses.curs_set')
-    def test_start_game_setup(self, mock_curs_set,
+    def test_start_game_setup(self, mock_curs_set, mock_sleep,
                               mock_check_end_game,
                               mock_game_controller, mock_create_food_set,
                               mock_generate_obstacles, mock_draw_board,
