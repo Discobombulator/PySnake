@@ -1,9 +1,16 @@
-import curses
-import unittest
 from unittest.mock import Mock
 
 from constants import Constants
+from controller.level_controller import level_controller
 from controller.game_controller import game_controller
+import unittest
+from unittest.mock import MagicMock, patch
+import curses
+import sys
+import os
+
+sys.path.insert(0,
+                os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 
 class TestGameController(unittest.TestCase):
@@ -70,4 +77,81 @@ class TestGameController(unittest.TestCase):
 
         result = game_controller(direction, std)
         self.assertEqual(result,
-                         Constants.RIGHT)  # Direction should not change
+                         Constants.RIGHT)
+
+
+class TestLevelController(unittest.TestCase):
+    @patch('controller.level_controller.start_game')
+    def test_level_selection_key_1(self, mock_start_game):
+        mock_std = MagicMock()
+
+        mock_std.getch.side_effect = [ord('1'), ord('q')]
+
+        mock_start_game.return_value = "brake"
+
+        result = level_controller(mock_std)
+
+        mock_start_game.assert_called_once_with(mock_std, 1)
+
+        self.assertEqual(result, "brake")
+
+    @patch('controller.level_controller.start_game')
+    def test_level_selection_key_2(self, mock_start_game):
+        mock_std = MagicMock()
+
+        mock_std.getch.side_effect = [ord('2'), ord('q')]
+
+        mock_start_game.return_value = "brake"
+
+        result = level_controller(mock_std)
+
+        mock_start_game.assert_called_once_with(mock_std, 2)
+
+        self.assertEqual(result, "brake")
+
+    @patch('controller.level_controller.start_game')
+    def test_level_selection_key_3(self, mock_start_game):
+        mock_std = MagicMock()
+
+        mock_std.getch.side_effect = [ord('3'), ord('q')]
+
+        mock_start_game.return_value = "brake"
+
+        result = level_controller(mock_std)
+
+        mock_start_game.assert_called_once_with(mock_std, 3)
+
+        self.assertEqual(result, "brake")
+
+    @patch('controller.level_controller.start_game')
+    def test_ignores_invalid_keys(self, mock_start_game):
+        mock_std = MagicMock()
+
+        mock_std.getch.side_effect = [ord('x'), ord('1'), ord('q')]
+
+        mock_start_game.return_value = "brake"
+
+        result = level_controller(mock_std)
+
+        mock_start_game.assert_called_once_with(mock_std, 1)
+
+        self.assertEqual(result, "brake")
+
+    @patch('controller.level_controller.start_game')
+    def test_restart_game(self, mock_start_game):
+        mock_std = MagicMock()
+
+        mock_std.getch.side_effect = [ord('1')]
+
+        mock_start_game.side_effect = ["play", "brake"]
+
+        result = level_controller(mock_std)
+
+        self.assertEqual(mock_start_game.call_count, 2)
+        mock_start_game.assert_called_with(mock_std, 1)
+
+        self.assertEqual(result, "brake")
+
+
+if __name__ == '__main__':
+    unittest.main()
