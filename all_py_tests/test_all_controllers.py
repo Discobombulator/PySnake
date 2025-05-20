@@ -1,11 +1,9 @@
 import curses
 import unittest
-from unittest.mock import Mock, call, patch
+from unittest.mock import Mock
 
 from constants import Constants
-from controller.game_controller import game_controller, check_end_game_mult, \
-    check_end_game
-from controller.level_controller import level_controller
+from controller.game_controller import game_controller
 
 
 class TestGameController(unittest.TestCase):

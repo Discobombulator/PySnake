@@ -3,6 +3,8 @@ from logic.records import GameRecords
 
 
 def start_work(std):
+    """Выводит начальный экран"""
+
     records = GameRecords()
     records.load_data()
     data = records.get_data()

@@ -2,6 +2,7 @@ import curses
 
 
 def playing_controller(std):
+    """ Контроллер для рестарта игры"""
     while True:
         key = std.getch()
 

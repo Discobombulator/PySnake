@@ -11,6 +11,8 @@ from vizual.game_board import draw_board, init_colors
 
 
 def start_game(std, level):
+    """ Начало игры"""
+
     # Инициализация цветов для игры
     init_colors()
 

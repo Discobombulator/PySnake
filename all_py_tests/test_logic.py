@@ -1,8 +1,6 @@
 import unittest
 from unittest.mock import patch, call, MagicMock, Mock
 
-from constants import Constants
-from logic.game import start_game
 from logic.network import encode, decode_stream
 from logic.obtacles_gen import generate_obstacles_mult, generate_obstacles
 from logic.records import GameRecords
@@ -101,6 +99,3 @@ class TestObstaclesGen(unittest.TestCase):
                                                       (5, 6)]):
                 obstacles = generate_obstacles(snake, food, 3)
                 self.assertEqual(len(obstacles), 3)
-
-
-

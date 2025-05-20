@@ -6,6 +6,7 @@ from vizual.end_scene import print_end
 
 def check_end_game_mult(new_head, player_id, snakes, obstacles,
                         field_height, field_width):
+    """ Контроллер для проверки конца игры"""
     # Проверка столкновения со стеной
     if (new_head[0] < 0 or new_head[0] >= field_height or
             new_head[1] < 0 or new_head[1] >= field_width):
@@ -32,6 +33,8 @@ def check_end_game_mult(new_head, player_id, snakes, obstacles,
 
 
 def game_controller(direction, std):
+    """ Контроллер для смены направления змеи"""
+
     key = std.getch()
 
     if key == curses.KEY_UP and direction != Constants.DOWN:
@@ -49,6 +52,8 @@ def game_controller(direction, std):
 
 
 def check_end_game(new_head, std, snake, obstacles=None):
+    """ Контроллер для проверки конца игры"""
+
     if (new_head[0] == 0 or new_head[0] == Constants.FIELD_HEIGHT or
             new_head[1] == 0 or new_head[1] == Constants.FIELD_WIDTH):
         if print_end(std, snake) == "play":

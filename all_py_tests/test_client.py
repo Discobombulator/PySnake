@@ -1,6 +1,5 @@
-import curses
 import unittest
-from unittest.mock import Mock, patch, call
+from unittest.mock import Mock, patch
 
 from client import SnakeClient
 from logic.network import encode
@@ -56,7 +55,9 @@ class TestClient(unittest.TestCase):
         client.sock.recv.side_effect = [encoded_data, Exception()]
 
         client.recv_loop()
-        self.assertEqual({'food': [], 'snakes': {'1': {'body': [(5, 5)]}}}, state_data)
+        (self.assertEqual
+         ({'food': [], 'snakes': {'1': {'body': [(5, 5)]}}},
+          state_data))
 
     @patch('socket.socket')
     def test_recv_loop_connection_lost(self, mock_socket):

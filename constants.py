@@ -1,3 +1,6 @@
+"""Константы"""
+
+
 class Constants:
     FIELD_HEIGHT = 200
     FIELD_WIDTH = 600

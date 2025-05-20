@@ -27,6 +27,8 @@ def generate_obstacles_mult(self, count):
 
 
 def generate_obstacles(snake, food, level):
+    """Генерация препятствия"""
+
     total_cells = [(row, col) for row in range(Constants.FIELD_HEIGHT)
                    for col in range(Constants.FIELD_WIDTH)]
     available = [cell for cell in total_cells if cell not in snake.body

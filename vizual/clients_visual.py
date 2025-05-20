@@ -4,6 +4,9 @@ from constants import Constants
 
 
 def get_viewport_centered_on(head):
+    """get_viewport_centered_on: Вычисляет область видимости,
+     центрированную на голове змейки."""
+
     row, col = head
     half_height = Constants.VIEW_HEIGHT // 2
     half_width = Constants.VIEW_WIDTH // 2

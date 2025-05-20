@@ -2,6 +2,7 @@ from controller.end_game_controller import playing_controller
 
 
 def print_end(std, snake):
+    """Выводит экран смерти"""
     std.clear()
     std.addstr(0, 0, "Вы проиграли(((")
     std.addstr(1, 0, "Вы ударились о границу!")

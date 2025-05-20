@@ -4,6 +4,8 @@ from constants import Constants
 
 
 def get_viewport_centered_on(head):
+    """Считает центр поля"""
+
     row, col = head
     half_height = Constants.VIEW_HEIGHT // 2
     half_width = Constants.VIEW_WIDTH // 2
@@ -17,6 +19,8 @@ def get_viewport_centered_on(head):
 
 
 def init_colors():
+    """Инициализация цветов"""
+
     # Убедимся, что терминал поддерживает цвета
     curses.start_color()
     if curses.has_colors():
@@ -40,6 +44,8 @@ def init_colors():
 
 
 def draw_board(snake, food_list, std, level=1, obstacles=None):
+    """Выводит игровую доску"""
+
     std.clear()
 
     head = snake.body[0]

@@ -5,15 +5,19 @@ from constants import Constants
 
 
 def encode(data):
+    """encode: Кодирует данные в JSON с разделителем."""
     json_data = json.dumps(data).encode('utf-8')
     return json_data + Constants.MESSAGE_DELIMITER
 
 
 def decode_single(data):
+    """decode_single: Декодирует одно сообщение из JSON."""
     return json.loads(data.decode('utf-8'))
 
 
 def decode_stream(buffer):
+    """decode_stream: Разбирает поток сообщений, возвращая готовые и неполные
+     данные."""
     messages = []
     parts = buffer.split(Constants.MESSAGE_DELIMITER)
 
