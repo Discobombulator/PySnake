@@ -1,11 +1,12 @@
 import unittest
-from unittest.mock import patch, Mock
+from unittest.mock import patch, Mock, call
 
 from constants import Constants
 from controller.game_controller import check_end_game_mult
 from logic.network import encode
 from logic.snakes_food import SnakesFood
 from server import GameServer
+from logic.obtacles_gen import generate_obstacles_mult
 
 
 class TestGameServer(unittest.TestCase):
@@ -204,3 +205,39 @@ class TestGameServer(unittest.TestCase):
 
             self.assertIn(1, server.clients)
             mock_thread.assert_called()
+
+    @patch('random.randint')
+    def test_generate_obstacles_mult(self, mock_randint):
+        server = GameServer()
+
+        server.food_list = [SnakesFood((10, 10), 1), SnakesFood((15, 15), 2)]
+        server.snakes = {1: {'body': [(5, 5), (5, 6)]}}
+
+        mock_randint.side_effect = [
+            2, 3,
+            7, 8,
+            10, 10,
+            20, 20
+        ]
+
+        obstacle_count = 3
+        obstacles = generate_obstacles_mult(server, obstacle_count)
+
+        self.assertEqual(len(obstacles), 3)
+        self.assertIn((2, 3), obstacles)
+        self.assertIn((7, 8), obstacles)
+        self.assertIn((20, 20), obstacles)
+        self.assertNotIn((10, 10),
+                         obstacles)
+
+        expected_calls = [
+            call(1, Constants.FIELD_HEIGHT - 2),
+            call(1, Constants.FIELD_WIDTH - 2),
+            call(1, Constants.FIELD_HEIGHT - 2),
+            call(1, Constants.FIELD_WIDTH - 2),
+            call(1, Constants.FIELD_HEIGHT - 2),
+            call(1, Constants.FIELD_WIDTH - 2),
+            call(1, Constants.FIELD_HEIGHT - 2),
+            call(1, Constants.FIELD_WIDTH - 2),
+        ]
+        mock_randint.assert_has_calls(expected_calls)
