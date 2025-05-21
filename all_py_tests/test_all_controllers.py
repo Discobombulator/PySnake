@@ -1,7 +1,7 @@
 from controller.level_controller import level_controller
 from controller.game_controller import game_controller
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 import curses
 import sys
 import os
