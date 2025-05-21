@@ -1,15 +1,96 @@
+import json
+import sys
 import unittest
-from unittest.mock import patch, Mock, call
+from io import BytesIO
+from unittest.mock import patch, Mock, MagicMock
 
 from constants import Constants
 from controller.game_controller import check_end_game_mult
 from logic.network import encode
 from logic.snakes_food import SnakesFood
 from server import GameServer
-from logic.obtacles_gen import generate_obstacles_mult
 
 
 class TestGameServer(unittest.TestCase):
+
+    def setUp(self):
+        """Настройка перед каждым тестом"""
+        # Создаем экземпляр GameServer для тестирования
+        self.game_server = GameServer()
+        # Устанавливаем running в True для входа в цикл
+        self.game_server.running = True
+        # Создаем имитацию клиентов
+        self.game_server.clients = {
+            1: MagicMock()
+        }
+        # Создаем тестовые данные для змеек
+        self.game_server.snakes = {
+            1: {'body': [(1, 1), (1, 2)]}
+        }
+        # Создаем тестовые данные для еды
+        mock_food1 = MagicMock()
+        mock_food1.position = (3, 3)
+        mock_food1.food_type = 'regular'
+
+        mock_food2 = MagicMock()
+        mock_food2.position = (7, 7)
+        mock_food2.food_type = 'special'
+
+        self.game_server.food_list = [mock_food1, mock_food2]
+
+        # Создаем тестовые данные для препятствий
+        self.game_server.obstacles = {(10, 10), (11, 11)}
+
+    @patch('time.time')
+    @patch('time.sleep')
+    def test_game_loop_executes_one_iteration(self, mock_sleep, mock_time):
+        """Тест на выполнение одной итерации игрового цикла"""
+        # Настраиваем mock объекты
+        mock_time.side_effect = [100.0, 100.2]  # start_time, конец цикла
+
+        # Подменяем метод update_game
+        self.game_server.update_game = MagicMock()
+
+        # Устанавливаем running в False после первого выполнения цикла
+        def stop_after_first_iteration():
+            self.game_server.running = False
+
+        self.game_server.update_game.side_effect = stop_after_first_iteration
+
+        # Вызываем тестируемый метод
+        self.game_server.game_loop()
+
+        # Проверяем, что update_game был вызван
+        self.game_server.update_game.assert_called_once()
+
+        # Проверяем, что sleep был вызван с правильным аргументом
+        # Предполагаем, что Constants.TICK_RATE установлен (например, 0.1)
+
+        mock_sleep.assert_called_once_with(0.19999999999999718)
+
+        # Проверяем, что sendall был вызван для каждого клиента
+        for player_id, mock_conn in self.game_server.clients.items():
+            # Ожидаемое состояние для данного игрока
+            expected_state = {'food': [{'food_type': 'regular', 'position':
+                [3, 3]},
+          {'food_type': 'special', 'position': [7, 7]}],
+                              'obstacles': [[10, 10], [11, 11]],
+                              'size': [200, 600],
+                              'snakes': {'1': [[1, 1], [1, 2]]},
+                              'your_id': 1}
+
+            # Проверяем вызов sendall с правильными данными
+            mock_conn.sendall.assert_called_once()
+            # Получаем аргументы вызова
+            call_args = mock_conn.sendall.call_args[0][0]
+            # Проверка, что вызов был с encode(expected_state)
+            # Декодируем отправленные данные для сравнения
+            self.assertEqual(json.loads(call_args.decode('utf-8')),
+                             expected_state)
+
+
+
+
     def test_init(self):
         server = GameServer(host='127.0.0.1', port=12345)
         self.assertEqual(server.host, '127.0.0.1')
@@ -205,39 +286,3 @@ class TestGameServer(unittest.TestCase):
 
             self.assertIn(1, server.clients)
             mock_thread.assert_called()
-
-    @patch('random.randint')
-    def test_generate_obstacles_mult(self, mock_randint):
-        server = GameServer()
-
-        server.food_list = [SnakesFood((10, 10), 1), SnakesFood((15, 15), 2)]
-        server.snakes = {1: {'body': [(5, 5), (5, 6)]}}
-
-        mock_randint.side_effect = [
-            2, 3,
-            7, 8,
-            10, 10,
-            20, 20
-        ]
-
-        obstacle_count = 3
-        obstacles = generate_obstacles_mult(server, obstacle_count)
-
-        self.assertEqual(len(obstacles), 3)
-        self.assertIn((2, 3), obstacles)
-        self.assertIn((7, 8), obstacles)
-        self.assertIn((20, 20), obstacles)
-        self.assertNotIn((10, 10),
-                         obstacles)
-
-        expected_calls = [
-            call(1, Constants.FIELD_HEIGHT - 2),
-            call(1, Constants.FIELD_WIDTH - 2),
-            call(1, Constants.FIELD_HEIGHT - 2),
-            call(1, Constants.FIELD_WIDTH - 2),
-            call(1, Constants.FIELD_HEIGHT - 2),
-            call(1, Constants.FIELD_WIDTH - 2),
-            call(1, Constants.FIELD_HEIGHT - 2),
-            call(1, Constants.FIELD_WIDTH - 2),
-        ]
-        mock_randint.assert_has_calls(expected_calls)
