@@ -1,7 +1,5 @@
 import json
-import sys
 import unittest
-from io import BytesIO
 from unittest.mock import patch, Mock, MagicMock
 
 from constants import Constants
@@ -71,9 +69,10 @@ class TestGameServer(unittest.TestCase):
         # Проверяем, что sendall был вызван для каждого клиента
         for player_id, mock_conn in self.game_server.clients.items():
             # Ожидаемое состояние для данного игрока
-            expected_state = {'food': [{'food_type': 'regular', 'position':
-                [3, 3]},
-          {'food_type': 'special', 'position': [7, 7]}],
+            expected_state = {'food': [{'food_type': 'regular',
+                                        'position': [3, 3]},
+                                       {'food_type': 'special',
+                                        'position': [7, 7]}],
                               'obstacles': [[10, 10], [11, 11]],
                               'size': [200, 600],
                               'snakes': {'1': [[1, 1], [1, 2]]},
@@ -87,9 +86,6 @@ class TestGameServer(unittest.TestCase):
             # Декодируем отправленные данные для сравнения
             self.assertEqual(json.loads(call_args.decode('utf-8')),
                              expected_state)
-
-
-
 
     def test_init(self):
         server = GameServer(host='127.0.0.1', port=12345)
